@@ -1,9 +1,9 @@
 <?php
 session_start();
-if(isset($_SESSION['loggedIn'])&& $_SESSION['loggeeIN']){
-    if($_SESSION[user_role]=='Admin')header("Location:AdminDashboard.php");
-    if($_SESSION[user_role]=='doctor')header("Location:DoctorDashboard.php");
-    else header("Loction:PatientHome.php");
+if(isset($_SESSION['loggedIn'])&& $_SESSION['loggeeIn']){
+    if($_SESSION['user_role']=='Admin')header("Location:AdminDashboard.php");
+    if($_SESSION['user_role']=='doctor')header("Location:DoctorDashboard.php");
+    else header("Location:PatientHome.php");
     exit();
   }  
 
@@ -18,13 +18,13 @@ if(isset($_SESSION['loggedIn'])&& $_SESSION['loggeeIN']){
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Patient Registration - Careplus Hospital </title>
-    <link rel="stylesheet" herf="Registration.css">
+    <link rel="stylesheet" href="Registration.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
      <div class="container">
-        <div class="leftside">
+        <div class="left-side">
             <div  class="overlay">
                 <h1>Careplus Hospital</h1>
                 <p>Appointment Booking System</p>
@@ -110,7 +110,7 @@ if(isset($_SESSION['loggedIn'])&& $_SESSION['loggeeIN']){
                    placeholder="Enter your phone number" required>
           </div>
            
-           </div>  <!-- Client-side JS error box -->
+           <!-- Client-side JS error box -->
           <div id="formError" class="alert alert-error" style="display:none;"></div>
 
           <button type="submit" class="register-btn">
@@ -130,7 +130,7 @@ if(isset($_SESSION['loggedIn'])&& $_SESSION['loggeeIN']){
 
   </div>
 
-  <script src="../Script/Validation.js"></script>
+   <script src="../Script/Validation.js"></script>
 
 
 
