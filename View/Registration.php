@@ -109,6 +109,29 @@ if(isset($_SESSION['loggedIn'])&& $_SESSION['loggeeIN']){
             <input type="text" id="user_phone" name="user_phone"
                    placeholder="Enter your phone number" required>
           </div>
+           
+           </div>  <!-- Client-side JS error box -->
+          <div id="formError" class="alert alert-error" style="display:none;"></div>
+
+          <button type="submit" class="register-btn">
+            Register
+          </button>
+
+        </form>
+
+        <div class="login-link">
+          Already have an account?
+          <a href="Login.php">Login here</a>
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+
+  <script src="../Script/Validation.js"></script>
+
 
 
 </body>
