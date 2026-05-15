@@ -1,4 +1,38 @@
+<?php
+session_start();
+include_once "../Config/SessionGuard.php";
 
+// Only patients can see this page
+if (!isset($_SESSION['loggedIn']) || $_SESSION['user_role'] != 'Patient') {
+    header("Location: Login.php");
+    exit();
+}
+
+include_once "../Config/Db.php";
+include_once "../Model/UserModel.php";
+include_once "../Model/AppointmentModel.php";
+
+$db = new Db();
+$conn = $db->connection();
+$userModel = new UserModel();
+$appointmentModel = new AppointmentModel();
+
+$userId = $_SESSION['user_id'];
+
+// Get the patient's full profile
+$user = $userModel->getUserById($conn, $userId);
+
+// Get appointment counts for the stat cards
+$upcomingCount  = $appointmentModel->countUpcomingAppointments($conn, $userId);
+$completedCount = $appointmentModel->countCompletedAppointments($conn, $userId);
+$cancelledCount = $appointmentModel->countCancelledAppointments($conn, $userId);
+
+// Format the "member since" date nicely
+$memberSince = date('d M Y', strtotime($user['user_created_at']));
+$formattedDob = date('d M Y', strtotime($user['user_dob']));
+
+$activePage = 'dashboard';
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
