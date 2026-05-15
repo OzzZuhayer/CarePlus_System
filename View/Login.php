@@ -1,4 +1,24 @@
- <!DOCTYPE html>
+<?php
+session_start();
+
+if (isset($_SESSION['loggedIn']) && $_SESSION['loggedIn']) {
+    if ($_SESSION['user_role'] == 'Admin') 
+        header("Location: AdminDashboard.php");
+    elseif ($_SESSION['user_role'] == 'Doctor') 
+        header("Location: DoctorDashboard.php");
+    else 
+        header("Location: PatientHome.php");
+    exit();
+}
+
+$errorMsg   = isset($_GET['error'])   ? urldecode($_GET['error']) : '';
+$successMsg = isset($_GET['success']) ? urldecode($_GET['success']) : '';
+?>
+
+
+
+
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
