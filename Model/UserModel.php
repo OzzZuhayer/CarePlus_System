@@ -72,5 +72,13 @@ class UserModel {
         $stmt->close();
         return $row ? $row['user_password'] : null;
     }
-    
+     // Update the user's password
+    function updatePassword($conn, $userId, $newPassword) {
+        $sql = "UPDATE users SET user_password = ? WHERE user_id = ?";
+        $stmt = $conn->prepare($sql);
+        $stmt->bind_param("si", $newPassword, $userId);
+        $result = $stmt->execute();
+        $stmt->close();
+        return $result;
+    }
 }   
