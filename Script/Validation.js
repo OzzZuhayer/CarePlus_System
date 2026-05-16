@@ -9,3 +9,11 @@ function togglePassword(fieldId, button) {
         button.textContent = 'Show';
     }
 }
+// Show an inline error message inside a form
+function showFormError(elementId, message) {
+    var el = document.getElementById(elementId);
+    if (el) {
+        el.textContent = message;
+        el.style.display = 'flex';
+    }
+}
