@@ -17,3 +17,10 @@ function showFormError(elementId, message) {
         el.style.display = 'flex';
     }
 }
+// Hide a form error message
+function hideFormError(elementId) {
+    var el = document.getElementById(elementId);
+    if (el) {
+        el.style.display = 'none';
+    }
+}
