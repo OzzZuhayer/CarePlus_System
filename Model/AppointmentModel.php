@@ -46,4 +46,36 @@ class AppointmentModel {
         $stmt->close();
         return $result ? $newId : false;
     }
+
+        // Get all appointments for a specific patient (for My Appointments page)
+    function getPatientAppointments($conn, $patientId) {
+        $sql = "SELECT a.appointment_id, a.appointment_date, a.appointment_time,
+                       a.appointment_message, a.appointment_status, a.appointment_created_at,
+                       u.user_name AS doctor_name,
+                       s.specialization_name
+                FROM appointments a
+                JOIN doctors d ON a.doctor_id = d.doctor_id
+                JOIN users u ON d.user_id = u.user_id
+                JOIN specializations s ON d.specialization_id = s.specialization_id
+                WHERE a.patient_id = ?
+                ORDER BY a.appointment_date DESC, a.appointment_time DESC";
+        $stmt = $conn->prepare($sql);
+        $stmt->bind_param("i", $patientId);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $stmt->close();
+        return $result;
+    }
+
+    // Cancel an appointment (patient can only cancel their own pending appointments)
+    function cancelAppointment($conn, $appointmentId, $patientId) {
+        $sql = "UPDATE appointments SET appointment_status = 'Cancelled'
+                WHERE appointment_id = ? AND patient_id = ? AND appointment_status = 'Pending'";
+        $stmt = $conn->prepare($sql);
+        $stmt->bind_param("ii", $appointmentId, $patientId);
+        $result = $stmt->execute();
+        $affected = $stmt->affected_rows;
+        $stmt->close();
+        return $affected > 0;
+    }
 }
