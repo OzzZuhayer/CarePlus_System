@@ -62,3 +62,56 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         }
         exit();
     }
+ // Change password
+    if ($action == 'change_password') {
+
+        $currentPassword = trim($_POST['current_password']);
+        $newPassword     = trim($_POST['new_password']);
+        $confirmPassword = trim($_POST['confirm_password']);
+
+        $errors = [];
+
+        if (empty($currentPassword))
+            $errors[] = "Current password is required.";
+
+        if (empty($newPassword))
+            $errors[] = "New password is required.";
+        elseif (!preg_match("/^(?=.*[A-Za-z])(?=.*\d)(?=.*[^A-Za-z\d])[A-Za-z\S]{8,}$/", $newPassword))
+            $errors[] = "New password must contain one letter, one number, one special character. Minimum length is 8.";
+
+        if (empty($confirmPassword))
+            $errors[] = "Please confirm your new password.";
+        elseif ($newPassword !== $confirmPassword)
+            $errors[] = "New passwords do not match.";
+
+        if (!empty($errors)) {
+            header("Location: ../View/EditProfile.php?error=" . urlencode(implode("|", $errors)));
+            exit();
+        }
+
+        // Verify current password against stored hash
+        $storedPassword = $userModel->getUserPassword($conn, $userId);
+
+        if (!password_verify($currentPassword, $storedPassword)) {
+            header("Location: ../View/EditProfile.php?error=" . urlencode("Current password is incorrect."));
+            exit();
+        }
+
+        $hashedNewPassword = password_hash($newPassword, PASSWORD_DEFAULT);
+        $success = $userModel->updatePassword($conn, $userId, $hashedNewPassword);
+
+        if ($success) {
+            header("Location: ../View/EditProfile.php?success=" . urlencode("Password changed successfully."));
+        } else {
+            header("Location: ../View/EditProfile.php?error=" . urlencode("Failed to change password. Please try again."));
+        }
+        exit();
+    }
+
+    header("Location: ../View/EditProfile.php");
+    exit();
+
+} else {
+    header("Location: ../View/EditProfile.php");
+    exit();
+}
