@@ -23,5 +23,17 @@ class UserModel {
         $stmt->close();
         return $result;
     }
-
+    // Get a user by their email address (used during login)
+    function getUserByEmail($conn, $userEmail) {
+        $sql = "SELECT user_id, user_name, user_email, user_password, user_role, user_is_active
+                FROM users
+                WHERE user_email = ?";
+        $stmt = $conn->prepare($sql);
+        $stmt->bind_param("s", $userEmail);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $user = $result->fetch_assoc();
+        $stmt->close();
+        return $user;
+    }
 }   
