@@ -13,4 +13,15 @@ class UserModel {
         $stmt->close();
         return $exists;
     }
+
+    function registerPatient($conn, $userName, $userEmail, $userPassword, $userDob, $userBg, $userPhone) {
+        $sql = "INSERT INTO users (user_name, user_email, user_password, user_role, user_dob, user_bg, user_phone)
+                VALUES (?, ?, ?, 'Patient', ?, ?, ?)";
+        $stmt = $conn->prepare($sql);
+        $stmt->bind_param("ssssss", $userName, $userEmail, $userPassword, $userDob, $userBg, $userPhone);
+        $result = $stmt->execute();
+        $stmt->close();
+        return $result;
+    }
+
 }   
