@@ -16,8 +16,6 @@ $successMsg = isset($_GET['success']) ? urldecode($_GET['success']) : '';
 ?>
 
 
-
-
 <!DOCTYPE html>
 <html lang="en">
 <head>

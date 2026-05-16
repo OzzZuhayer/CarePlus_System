@@ -36,4 +36,18 @@ class UserModel {
         $stmt->close();
         return $user;
     }
+    
+    function getUserById($conn, $userId) {
+        $sql = "SELECT user_id, user_name, user_email, user_role, user_dob, user_bg, user_phone, user_created_at
+                FROM users
+                WHERE user_id = ?";
+        $stmt = $conn->prepare($sql);
+        $stmt->bind_param("i", $userId);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $user = $result->fetch_assoc();
+        $stmt->close();
+        return $user;
+    }
+
 }   
