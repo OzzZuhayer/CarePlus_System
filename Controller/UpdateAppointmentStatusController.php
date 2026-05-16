@@ -23,3 +23,43 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         echo json_encode(['ok' => false, 'message' => 'Invalid appointment.']);
         exit();
     }
+
+    $db = new Db();
+    $conn = $db->connection();
+    $appointmentModel = new AppointmentModel();
+
+    // Cancel with reason (admin only)
+    if ($action === 'cancel_with_reason') {
+        if ($_SESSION['user_role'] !== 'Admin') {
+            echo json_encode(['ok' => false, 'message' => 'Unauthorized.']);
+            exit();
+        }
+        if (empty($reason)) {
+            echo json_encode(['ok' => false, 'message' => 'Cancellation reason is required.']);
+            exit();
+        }
+        $success = $appointmentModel->cancelWithReason($conn, $appointmentId, $reason);
+        echo json_encode(['ok' => $success, 'new_status' => 'Cancelled']);
+        exit();
+    }
+
+    // Regular status update
+    if (!in_array($newStatus, $allowedStatuses)) {
+        echo json_encode(['ok' => false, 'message' => 'Invalid status.']);
+        exit();
+    }
+
+    if ($_SESSION['user_role'] == 'Doctor') {
+        if (!in_array($newStatus, ['Completed', 'No-Show'])) {
+            echo json_encode(['ok' => false, 'message' => 'Doctors can only mark Completed or No-Show.']);
+            exit();
+        }
+    }
+
+    $success = $appointmentModel->updateAppointmentStatus($conn, $appointmentId, $newStatus);
+    echo json_encode(['ok' => $success, 'new_status' => $newStatus]);
+
+} else {
+    echo json_encode(['ok' => false, 'message' => 'Invalid request.']);
+}
+exit();
