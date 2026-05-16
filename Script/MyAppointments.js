@@ -1,3 +1,18 @@
+// Filter table rows by the clicked status tab
+function filterAppointments(status, clickedTab) {
+    var tabs = document.querySelectorAll('.tab-btn');
+    tabs.forEach(function(tab){ tab.classList.remove('active'); });
+    clickedTab.classList.add('active');
+    var rows = document.querySelectorAll('.appt-row');
+    rows.forEach(function(row) {
+        if (status === 'all') {
+            row.style.display = '';
+        } else {
+            row.style.display = (row.getAttribute('data-status') === status) ? '' : 'none';
+        }
+    });
+}
+
 // Trigger cancel modal for a pending appointment
 function cancelAppointment(appointmentId) {
     showConfirmModal(function() {
