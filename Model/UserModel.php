@@ -81,4 +81,14 @@ class UserModel {
         $stmt->close();
         return $result;
     }
+    // ADMIN - USER MANAGEMENT
+
+    // Get all users for the admin user management page
+    function getAllUsers($conn) {
+        $sql = "SELECT user_id, user_name, user_email, user_role, user_is_active
+                FROM users
+                ORDER BY user_id ASC";
+        $result = $conn->query($sql);
+        return $result;
+    }
 }   
