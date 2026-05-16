@@ -61,4 +61,16 @@ class UserModel {
         $stmt->close();
         return $result;
     }
+    // Get just the password of a user (used for password change verification)
+    function getUserPassword($conn, $userId) {
+        $sql = "SELECT user_password FROM users WHERE user_id = ?";
+        $stmt = $conn->prepare($sql);
+        $stmt->bind_param("i", $userId);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $row = $result->fetch_assoc();
+        $stmt->close();
+        return $row ? $row['user_password'] : null;
+    }
+    
 }   
