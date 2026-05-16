@@ -35,4 +35,15 @@ class AppointmentModel {
         return $available;
     }
     
+    // Book a new appointment
+    function bookAppointment($conn, $patientId, $doctorId, $appointmentDate, $appointmentTime, $appointmentMessage) {
+        $sql = "INSERT INTO appointments (patient_id, doctor_id, appointment_date, appointment_time, appointment_message)
+                VALUES (?, ?, ?, ?, ?)";
+        $stmt = $conn->prepare($sql);
+        $stmt->bind_param("iisss", $patientId, $doctorId, $appointmentDate, $appointmentTime, $appointmentMessage);
+        $result = $stmt->execute();
+        $newId = $conn->insert_id;
+        $stmt->close();
+        return $result ? $newId : false;
+    }
 }
