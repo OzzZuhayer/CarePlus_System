@@ -114,5 +114,6 @@ class UserModel {
         $stmt->close();
         return $row ? $row['user_is_active'] : null;
     }
-}   
+}
+   
 ?>
