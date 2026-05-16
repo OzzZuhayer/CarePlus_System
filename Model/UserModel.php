@@ -36,7 +36,7 @@ class UserModel {
         $stmt->close();
         return $user;
     }
-    
+
     function getUserById($conn, $userId) {
         $sql = "SELECT user_id, user_name, user_email, user_role, user_dob, user_bg, user_phone, user_created_at
                 FROM users
@@ -49,5 +49,16 @@ class UserModel {
         $stmt->close();
         return $user;
     }
-
+    
+        // Update patient profile (name, dob, blood group, phone)
+    function updateProfile($conn, $userId, $userName, $userDob, $userBg, $userPhone) {
+        $sql = "UPDATE users
+                SET user_name = ?, user_dob = ?, user_bg = ?, user_phone = ?
+                WHERE user_id = ?";
+        $stmt = $conn->prepare($sql);
+        $stmt->bind_param("ssssi", $userName, $userDob, $userBg, $userPhone, $userId);
+        $result = $stmt->execute();
+        $stmt->close();
+        return $result;
+    }
 }   
