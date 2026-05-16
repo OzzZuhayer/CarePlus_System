@@ -101,4 +101,18 @@ class UserModel {
         $stmt->close();
         return $result;
     }
+
+
+    // Get a user's current active status
+    function getUserStatus($conn, $userId) {
+        $sql = "SELECT user_is_active FROM users WHERE user_id = ?";
+        $stmt = $conn->prepare($sql);
+        $stmt->bind_param("i", $userId);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $row = $result->fetch_assoc();
+        $stmt->close();
+        return $row ? $row['user_is_active'] : null;
+    }
 }   
+?>
