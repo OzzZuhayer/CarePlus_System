@@ -91,4 +91,14 @@ class UserModel {
         $result = $conn->query($sql);
         return $result;
     }
+
+    // Toggle a user's active status (1 = active, 0 = inactive)
+    function toggleUserStatus($conn, $userId, $newStatus) {
+        $sql = "UPDATE users SET user_is_active = ? WHERE user_id = ?";
+        $stmt = $conn->prepare($sql);
+        $stmt->bind_param("ii", $newStatus, $userId);
+        $result = $stmt->execute();
+        $stmt->close();
+        return $result;
+    }
 }   
