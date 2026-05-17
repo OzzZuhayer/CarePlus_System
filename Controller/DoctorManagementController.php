@@ -93,6 +93,176 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             if (move_uploaded_file($file['tmp_name'], $uploadPath)) {
                 $doctorPhoto = "Assest/Public/Uploads/Doctors/" . $newFileName;
             }
-        }       
+        }
+
+        // Add new doctor
+        if ($doctorId == 0) {
+
+            // Check if email already exists
+            if ($userModel->emailExists($conn, $userEmail)) {
+                header("Location: ../View/AdminDoctorManagement.php?error=" . urlencode("This email is already registered."));
+                exit();
+            }
+
+            // Hash the password
+            $hashedPassword = password_hash($userPassword, PASSWORD_DEFAULT);
+
+            // First create the user account
+            $newUserId = $doctorModel->createDoctorUser($conn, $userName, $userEmail, $hashedPassword);
+
+            if (!$newUserId) {
+                header("Location: ../View/AdminDoctorManagement.php?error=" . urlencode("Failed to create doctor account."));
+                exit();
+            }
+
+            // Then create the doctor profile
+            $success = $doctorModel->createDoctorProfile($conn, $newUserId, $specializationId, $doctorBio, $doctorFee, $doctorPhoto, $doctorAvailability);
+
+            if ($success) {
+                header("Location: ../View/AdminDoctorManagement.php?success=" . urlencode("Doctor added successfully!"));
+            } else {
+                header("Location: ../View/AdminDoctorManagement.php?error=" . urlencode("Failed to save doctor profile."));
+            }
+            exit();
+        }
+
+        // Update existing doctor
+        if ($doctorId > 0) {
+
+            // Get the existing doctor data
+            $existingDoctor = $doctorModel->getDoctorById($conn, $doctorId);
+
+            if (!$existingDoctor) {
+                header("Location: ../View/AdminDoctorManagement.php?error=" . urlencode("Doctor not found."));
+                exit();
+            }
+
+            $existingUserId = $existingDoctor['user_id'];
+
+            // Check email is not taken by someone else
+            if ($doctorModel->emailExistsForOtherUser($conn, $userEmail, $existingUserId)) {
+                header("Location: ../View/AdminDoctorManagement.php?error=" . urlencode("This email is already used by another user.") . "&edit_id=$doctorId");
+                exit();
+            }
+
+            // If no new photo was uploaded, keep the existing one
+            if ($doctorPhoto == "Assest/Public/Uploads/Doctors/default.png" && !empty($existingDoctor['doctor_photo'])) {
+                $doctorPhoto = $existingDoctor['doctor_photo'];
+            }
+
+            // If a new password was entered, hash it — otherwise keep the old one
+            if (!empty($userPassword)) {
+                $hashedPassword = password_hash($userPassword, PASSWORD_DEFAULT);
+            } else {
+                // Get the existing hashed password from the database
+                $hashedPassword = $userModel->getUserPassword($conn, $existingUserId);
+            }
+
+            // Update the user account info
+            $doctorModel->updateDoctorUser($conn, $existingUserId, $userName, $userEmail, $hashedPassword);
+
+            // Update the doctor profile info
+            $success = $doctorModel->updateDoctorProfile($conn, $doctorId, $specializationId, $doctorBio, $doctorFee, $doctorPhoto, $doctorAvailability);
+
+            if ($success) {
+                header("Location: ../View/AdminDoctorManagement.php?success=" . urlencode("Doctor updated successfully!"));
+            } else {
+                header("Location: ../View/AdminDoctorManagement.php?error=" . urlencode("Failed to update doctor."));
+            }
+            exit();
+        }
     }
+
+    // ACTION: Delete Doctor
+    if ($action == 'delete_doctor') {
+
+        $doctorId = isset($_POST['doctor_id']) ? (int)$_POST['doctor_id'] : 0;
+
+        if ($doctorId <= 0) {
+            header("Location: ../View/AdminDoctorManagement.php?error=" . urlencode("Invalid doctor."));
+            exit();
+        }
+
+        $doctor = $doctorModel->getDoctorById($conn, $doctorId);
+
+        if (!$doctor) {
+            header("Location: ../View/AdminDoctorManagement.php?error=" . urlencode("Doctor not found."));
+            exit();
+        }
+
+        // Deactivate instead of hard delete (to preserve appointment history)
+        $success = $doctorModel->deactivateDoctor($conn, $doctor['user_id']);
+
+        if ($success) {
+            header("Location: ../View/AdminDoctorManagement.php?success=" . urlencode("Doctor deactivated successfully."));
+        } else {
+            header("Location: ../View/AdminDoctorManagement.php?error=" . urlencode("Failed to deactivate doctor."));
+        }
+        exit();
+    }
+
+    // ACTION: Save Specialization (Add or Edit)
+    if ($action == 'save_specialization') {
+
+        $specializationId   = isset($_POST['specialization_id']) ? (int)$_POST['specialization_id'] : 0;
+        $specializationName = trim($_POST['specialization_name']);
+
+        if (empty($specializationName)) {
+            header("Location: ../View/AdminSpecializations.php?error=" . urlencode("Specialization name is required."));
+            exit();
+        }
+
+        // Check for duplicate name
+        if ($doctorModel->specializationExists($conn, $specializationName, $specializationId)) {
+            header("Location: ../View/AdminSpecializations.php?error=" . urlencode("This specialization already exists."));
+            exit();
+        }
+
+        if ($specializationId > 0) {
+            // Update existing
+            $success = $doctorModel->updateSpecialization($conn, $specializationId, $specializationName);
+            $msg = "Specialization updated successfully!";
+        } else {
+            // Add new
+            $success = $doctorModel->addSpecialization($conn, $specializationName);
+            $msg = "Specialization added successfully!";
+        }
+
+        if ($success) {
+            header("Location: ../View/AdminSpecializations.php?success=" . urlencode($msg));
+        } else {
+            header("Location: ../View/AdminSpecializations.php?error=" . urlencode("Failed to save specialization."));
+        }
+        exit();
+    }
+
+    // ACTION: Delete Specialization
+    if ($action == 'delete_specialization') {
+
+        $specializationId = isset($_POST['specialization_id']) ? (int)$_POST['specialization_id'] : 0;
+
+        if ($specializationId <= 0) {
+            header("Location: ../View/AdminSpecializations.php?error=" . urlencode("Invalid specialization."));
+            exit();
+        }
+
+        // Cannot delete if doctors are assigned to it
+        if ($doctorModel->specializationInUse($conn, $specializationId)) {
+            header("Location: ../View/AdminSpecializations.php?error=" . urlencode("Cannot delete — doctors are assigned to this specialization."));
+            exit();
+        }
+
+        $success = $doctorModel->deleteSpecialization($conn, $specializationId);
+
+        if ($success) {
+            header("Location: ../View/AdminSpecializations.php?success=" . urlencode("Specialization deleted successfully."));
+        } else {
+            header("Location: ../View/AdminSpecializations.php?error=" . urlencode("Failed to delete specialization."));
+        }
+        exit();
+    }
+
+} else {
+    header("Location: ../View/AdminDoctorManagement.php");
+    exit();
 }
