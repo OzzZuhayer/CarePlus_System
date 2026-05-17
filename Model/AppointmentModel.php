@@ -208,4 +208,104 @@ class AppointmentModel {
         return $row['total'];
     }
 
-?>
+    // Get today's appointment count (for admin stats)
+    function getTodaysAppointmentCount($conn) {
+        $today = date('Y-m-d');
+        $sql = "SELECT COUNT(*) AS total FROM appointments WHERE appointment_date = '$today'";
+        $result = $conn->query($sql);
+        $row = $result->fetch_assoc();
+        return $row['total'];
+    }
+
+    // Get appointments with optional filters: doctor, date, status (for admin appointments page)
+    function getFilteredAppointments($conn, $doctorId = 0, $filterDate = '', $filterStatus = '') {
+        $where = [];
+        $params = [];
+        $types = '';
+
+        if ($doctorId > 0) {
+            $where[] = "a.doctor_id = ?";
+            $params[] = $doctorId;
+            $types .= 'i';
+        }
+        if (!empty($filterDate)) {
+            $where[] = "a.appointment_date = ?";
+            $params[] = $filterDate;
+            $types .= 's';
+        }
+        if (!empty($filterStatus)) {
+            $where[] = "a.appointment_status = ?";
+            $params[] = $filterStatus;
+            $types .= 's';
+        }
+
+        $whereClause = count($where) > 0 ? 'WHERE ' . implode(' AND ', $where) : '';
+
+        $sql = "SELECT a.appointment_id, a.appointment_date, a.appointment_time,
+                       a.appointment_message, a.appointment_status,
+                       u_patient.user_name AS patient_name,
+                       u_doctor.user_name AS doctor_name,
+                       s.specialization_name
+                FROM appointments a
+                JOIN users u_patient ON a.patient_id = u_patient.user_id
+                JOIN doctors d ON a.doctor_id = d.doctor_id
+                JOIN users u_doctor ON d.user_id = u_doctor.user_id
+                JOIN specializations s ON d.specialization_id = s.specialization_id
+                $whereClause
+                ORDER BY a.appointment_date DESC, a.appointment_time ASC";
+
+        if (count($params) > 0) {
+            $stmt = $conn->prepare($sql);
+            $stmt->bind_param($types, ...$params);
+            $stmt->execute();
+            $result = $stmt->get_result();
+            $stmt->close();
+            return $result;
+        }
+
+        return $conn->query($sql);
+    }
+
+    // Get today and tomorrow appointments with Pending or Confirmed status (for admin dashboard table)
+    function getDashboardAppointments($conn) {
+        $today    = date('Y-m-d');
+        $tomorrow = date('Y-m-d', strtotime('+1 day'));
+        $sql = "SELECT a.appointment_id, a.appointment_date, a.appointment_time,
+                       a.appointment_message, a.appointment_status,
+                       u_patient.user_name AS patient_name,
+                       u_doctor.user_name  AS doctor_name,
+                       s.specialization_name
+                FROM appointments a
+                JOIN users u_patient ON a.patient_id = u_patient.user_id
+                JOIN doctors d ON a.doctor_id = d.doctor_id
+                JOIN users u_doctor ON d.user_id = u_doctor.user_id
+                JOIN specializations s ON d.specialization_id = s.specialization_id
+                WHERE a.appointment_date IN (?, ?)
+                  AND a.appointment_status = 'Pending'
+                ORDER BY a.appointment_date ASC, a.appointment_time ASC";
+        $stmt = $conn->prepare($sql);
+        $stmt->bind_param("ss", $today, $tomorrow);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $stmt->close();
+        return $result;
+    }
+
+    // Cancel appointment with a reason (admin use)
+    function cancelWithReason($conn, $appointmentId, $reason) {
+        $sql = "UPDATE appointments SET appointment_status = 'Cancelled', appointment_message = CONCAT(appointment_message, ' [Cancelled: ', ?, ']') WHERE appointment_id = ?";
+        $stmt = $conn->prepare($sql);
+        $stmt->bind_param("si", $reason, $appointmentId);
+        $result = $stmt->execute();
+        $stmt->close();
+        return $result;
+    }
+
+    // Get total completed appointment count (for homepage tagline)
+    function getCompletedAppointmentCount($conn) {
+        $sql = "SELECT COUNT(*) AS total FROM appointments WHERE appointment_status = 'Completed'";
+        $result = $conn->query($sql);
+        $row = $result->fetch_assoc();
+        return $row['total'];
+    }
+}
