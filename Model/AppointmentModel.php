@@ -1,7 +1,4 @@
 <?php
-
-// Database operations related to appointments.
-
 class AppointmentModel {
 
     // Get all booked time slots for a specific doctor on a specific date
@@ -36,7 +33,7 @@ class AppointmentModel {
         $stmt->close();
         return $available;
     }
-
+  
     // Book a new appointment
     function bookAppointment($conn, $patientId, $doctorId, $appointmentDate, $appointmentTime, $appointmentMessage) {
         $sql = "INSERT INTO appointments (patient_id, doctor_id, appointment_date, appointment_time, appointment_message)
@@ -48,7 +45,7 @@ class AppointmentModel {
         $stmt->close();
         return $result ? $newId : false;
     }
-
+    
     // Get all appointments for a specific patient (for My Appointments page)
     function getPatientAppointments($conn, $patientId) {
         $sql = "SELECT a.appointment_id, a.appointment_date, a.appointment_time,
