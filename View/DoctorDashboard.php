@@ -62,7 +62,7 @@ if ($weeklyAppointments && $weeklyAppointments->num_rows > 0) {
 // Build time slots 09:00 to 22:00 in 30-min steps
 $timeSlots = [];
 $slotStart = strtotime('09:00');
-$slotEnd   = strtotime('22:00');
+$slotEnd   = strtotime('18:00');
 for ($t = $slotStart; $t <= $slotEnd; $t += 1800) {
     $timeSlots[] = date('H:i', $t);
 }
