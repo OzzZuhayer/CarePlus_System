@@ -309,3 +309,4 @@ class AppointmentModel {
         return $row['total'];
     }
 }
+
