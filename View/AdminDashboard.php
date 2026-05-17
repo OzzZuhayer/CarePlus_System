@@ -86,4 +86,74 @@ $activePage = 'dashboard';
                 </div>
             </div>
         </div>
-        
+
+        <!-- Today & Tomorrow Appointments Table -->
+        <div class="card">
+            <div class="card-title">Pending Appointments</div>
+            <div class="table-wrap">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>APPT ID</th>
+                            <th>Date &amp; Time</th>
+                            <th>Patient</th>
+                            <th>Doctor</th>
+                            <th>Specialization</th>
+                            <th>Current Status</th>
+                            <th>Change Status</th>
+                        </tr>
+                    </thead>
+                    <tbody id="dashboardTableBody">
+                        <?php
+                        if ($dashboardAppointments && $dashboardAppointments->num_rows > 0) {
+                            while ($row = $dashboardAppointments->fetch_assoc()) {
+                                $statusClass = 'badge-' . strtolower(str_replace('-', '', $row['appointment_status']));
+                                $displayDate = date('d M Y', strtotime($row['appointment_date']));
+                                $displayTime = date('h:i A', strtotime($row['appointment_time']));
+                                ?>
+                                <tr id="appt-row-<?= $row['appointment_id'] ?>">
+                                    <td><?= 'APPT-' . str_pad($row['appointment_id'], 4, '0', STR_PAD_LEFT) ?></td>
+                                    <td><?= $displayDate ?><br><small style="color:#6b7280;"><?= $displayTime ?></small></td>
+                                    <td><?= htmlspecialchars($row['patient_name']) ?></td>
+                                    <td><?= htmlspecialchars($row['doctor_name']) ?></td>
+                                    <td><?= htmlspecialchars($row['specialization_name']) ?></td>
+                                    <td>
+                                        <span class="badge <?= $statusClass ?>"
+                                              id="status-badge-<?= $row['appointment_id'] ?>">
+                                            <?= $row['appointment_status'] ?>
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <div style="display:flex; gap:8px; align-items:center;">
+                                            <select id="status-select-<?= $row['appointment_id'] ?>"
+                                                    class="form-control" style="max-width:140px; padding:7px 10px;">
+                                                <option value="Pending">Pending</option>
+                                                <option value="Confirmed">Confirmed</option>
+                                                <option value="Cancelled">Cancelled</option>
+                                            </select>
+                                            <button class="btn btn-sm btn-primary"
+                                                    onclick="dashboardUpdate(<?= $row['appointment_id'] ?>)">
+                                                Update
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <?php
+                            }
+                        } else {
+                            echo "<tr><td colspan='7' style='text-align:center; color:#6b7280; padding:30px;'>No upcoming appointments for today or tomorrow.</td></tr>";
+                        }
+                        ?>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<?php include "ConfirmModal.php"; ?>
+<script src="../Script/Modal.js"></script>
+<script src="../Script/AppointmentStatus.js"></script>
+</body>
+</html>
