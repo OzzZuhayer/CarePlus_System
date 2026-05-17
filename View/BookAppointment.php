@@ -56,6 +56,7 @@ $activePage = 'doctors';
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Book Appointment — CarePlus</title>
     <link rel="stylesheet" href="Style.css">
+    <link rel="icon" type="image/x-icon" href="../Asset/Public/favicon.ico">
     <style>
         .disabled-day { opacity:0.4; cursor:not-allowed; background:#f3f4f6; }
     </style>

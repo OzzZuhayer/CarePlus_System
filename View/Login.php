@@ -23,6 +23,7 @@ $successMsg = isset($_GET['success']) ? urldecode($_GET['success']) : '';
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login — CarePlus Hospital</title>
     <link rel="stylesheet" href="Style.css">
+    <link rel="icon" type="image/x-icon" href="../Asset/Public/favicon.ico">
 </head>
 <body>
 <div class="auth-page">
