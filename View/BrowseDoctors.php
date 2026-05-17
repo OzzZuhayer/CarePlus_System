@@ -59,7 +59,7 @@ $activePage = 'doctors';
                 <?php while ($row = $doctors->fetch_assoc()):
                     $photoSrc = !empty($row['doctor_photo'])
                         ? '../' . $row['doctor_photo']
-                        : '../Assest/Public/Uploads/Doctors/default.png';
+                        : '../Asset/Public/Uploads/Doctors/default.png';
                 ?>
                 <div class="doctor-card" data-name="<?= strtolower($row['user_name']) ?>">
                     <img src="<?= htmlspecialchars($photoSrc) ?>"

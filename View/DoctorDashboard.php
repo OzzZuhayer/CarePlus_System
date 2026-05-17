@@ -19,7 +19,7 @@ $doctorModel      = new DoctorModel();
 $doctorProfile  = $doctorModel->getDoctorById($conn, $_SESSION['doctor_id']);
 $doctorPhotoSrc = (!empty($doctorProfile['doctor_photo']))
     ? '../' . $doctorProfile['doctor_photo']
-    : '../Assest/Public/Uploads/Doctors/default.png';
+    : '../Asset/Public/Uploads/Doctors/default.png';
 
 $doctorId = $_SESSION['doctor_id'];
 

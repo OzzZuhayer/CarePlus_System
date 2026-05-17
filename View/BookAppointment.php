@@ -45,7 +45,7 @@ $errorMsg = isset($_GET['error']) ? urldecode($_GET['error']) : '';
 
 $photoSrc = !empty($doctor['doctor_photo'])
     ? '../' . $doctor['doctor_photo']
-    : '../Assest/Public/Uploads/Doctors/default.png';
+    : '../Asset/Public/Uploads/Doctors/default.png';
 
 $activePage = 'doctors';
 ?>

@@ -68,7 +68,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         }
 
         // Handle photo upload
-        $doctorPhoto = "Assest/Public/Uploads/Doctors/default.png"; // default photo
+        $doctorPhoto = "Asset/Public/Uploads/Doctors/default.png"; // default photo
 
         if (isset($_FILES['doctor_photo']) && $_FILES['doctor_photo']['error'] == 0) {
             $file     = $_FILES['doctor_photo'];
@@ -88,10 +88,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
             // Create a unique filename and save the file
             $newFileName = "doctor_" . time() . "." . $fileExt;
-            $uploadPath  = "../Assest/Public/Uploads/Doctors/" . $newFileName;
+            $uploadPath  = "../Asset/Public/Uploads/Doctors/" . $newFileName;
 
             if (move_uploaded_file($file['tmp_name'], $uploadPath)) {
-                $doctorPhoto = "Assest/Public/Uploads/Doctors/" . $newFileName;
+                $doctorPhoto = "Asset/Public/Uploads/Doctors/" . $newFileName;
             }
         }
 
@@ -146,7 +146,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             }
 
             // If no new photo was uploaded, keep the existing one
-            if ($doctorPhoto == "Assest/Public/Uploads/Doctors/default.png" && !empty($existingDoctor['doctor_photo'])) {
+            if ($doctorPhoto == "Asset/Public/Uploads/Doctors/default.png" && !empty($existingDoctor['doctor_photo'])) {
                 $doctorPhoto = $existingDoctor['doctor_photo'];
             }
 

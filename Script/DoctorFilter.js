@@ -17,7 +17,7 @@ function filterBySpecialization(specializationId) {
                     response.doctors.forEach(function(doc) {
                         var photoSrc = doc.doctor_photo
                             ? '../' + doc.doctor_photo
-                            : '../Assest/Public/Uploads/Doctors/default.png';
+                            : '../Asset/Public/Uploads/Doctors/default.png';
 
                         var card = document.createElement('div');
                         card.className = 'doctor-card';

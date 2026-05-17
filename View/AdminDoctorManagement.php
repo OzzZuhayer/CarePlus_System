@@ -247,7 +247,7 @@ $allDays    = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday
                                     : '<span class="badge badge-inactive">Inactive</span>';
                                 $photoSrc = !empty($row['doctor_photo'])
                                     ? '../' . $row['doctor_photo']
-                                    : '../Assest/Public/Uploads/Doctors/default.png';
+                                    : '../Asset/Public/Uploads/Doctors/default.png';
                                 ?>
                                 <tr>
                                     <td><?= 'DOC-' . str_pad($row['doctor_id'], 4, '0', STR_PAD_LEFT) ?></td>

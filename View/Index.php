@@ -128,7 +128,7 @@ $specializations->data_seek(0);
             <?php if ($topDoctors && $topDoctors->num_rows > 0): ?>
                 <?php 
                 while ($doc = $topDoctors->fetch_assoc()):
-                    $photoSrc = !empty($doc['doctor_photo']) ? '../' . $doc['doctor_photo']: '../Assest/Public/Uploads/Doctors/default.png';
+                    $photoSrc = !empty($doc['doctor_photo']) ? '../' . $doc['doctor_photo']: '../Asset/Public/Uploads/Doctors/default.png';
                     $bio = $doc['doctor_bio'] ? htmlspecialchars(substr($doc['doctor_bio'], 0, 80)) . '...' : 'Experienced specialist dedicated to patient care.';
                 ?>
                 <div class="featured-card">
