@@ -95,7 +95,8 @@ class AppointmentModel {
         $stmt->close();
         return $row['total'];
     }
-// Count completed appointments for a patient
+
+    // Count completed appointments for a patient
     function countCompletedAppointments($conn, $patientId) {
         $sql = "SELECT COUNT(*) AS total FROM appointments
                 WHERE patient_id = ? AND appointment_status = 'Completed'";
@@ -265,7 +266,6 @@ class AppointmentModel {
         return $conn->query($sql);
     }
 
-
     // Get today and tomorrow appointments with Pending or Confirmed status (for admin dashboard table)
     function getDashboardAppointments($conn) {
         $today    = date('Y-m-d');
@@ -309,4 +309,4 @@ class AppointmentModel {
         return $row['total'];
     }
 }
-?>
+
