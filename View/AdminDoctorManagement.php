@@ -186,4 +186,103 @@ $allDays    = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday
                         </div>
                     </div>
                 </div>
-                                
+
+                <!-- Availability Days Checkboxes (full width) -->
+                <div class="form-group" style="margin-top:10px;">
+                    <label>Availability Days (Weekly)</label>
+                    <div class="checkbox-group">
+                        <?php foreach ($allDays as $day): ?>
+                            <label class="checkbox-item">
+                                <input type="checkbox" name="availability_days[]" value="<?= $day ?>"
+                                       <?= in_array($day, $selectedDays) ? 'checked' : '' ?>>
+                                <?= $day ?>
+                            </label>
+                        <?php endforeach; ?>
+                    </div>
+                </div>
+
+                <div class="form-actions">
+                    <?php if ($editingDoctor): ?>
+                        <a href="AdminDoctorManagement.php" class="btn btn-secondary">Cancel</a>
+                    <?php endif; ?>
+                    <button type="button" class="btn btn-secondary" onclick="resetDoctorForm()">Reset</button>
+                    <button type="submit" class="btn btn-success">
+                        <?= $editingDoctor ? 'Update Doctor' : 'Save Doctor' ?>
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Doctor List Table -->
+        <div class="card">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
+                <div class="card-title" style="margin-bottom:0; border:none; padding:0;">Doctor List</div>
+                <input type="text" id="doctorSearch" class="form-control"
+                       placeholder="Search doctor..." style="max-width:220px;"
+                       onkeyup="searchTable('doctorSearch', 'doctorTable')">
+            </div>
+
+            <div class="table-wrap">
+                <table id="doctorTable">
+                    <thead>
+                        <tr>
+                            <th>DOC ID</th>
+                            <th>Photo</th>
+                            <th>Name</th>
+                            <th>Specialization</th>
+                            <th>Fee (TK)</th>
+                            <th>Available Days</th>
+                            <th>Total Appointments</th>
+                            <th>Status</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php
+                        $counter = 1;
+                        if ($doctors && $doctors->num_rows > 0) {
+                            while ($row = $doctors->fetch_assoc()) {
+                                $statusBadge = $row['user_is_active']
+                                    ? '<span class="badge badge-active">Active</span>'
+                                    : '<span class="badge badge-inactive">Inactive</span>';
+                                $photoSrc = !empty($row['doctor_photo'])
+                                    ? '../' . $row['doctor_photo']
+                                    : '../Assest/Public/Uploads/Doctors/default.png';
+                                ?>
+                                <tr>
+                                    <td><?= 'DOC-' . str_pad($row['doctor_id'], 4, '0', STR_PAD_LEFT) ?></td>
+                                    <td>
+                                        <img src="<?= htmlspecialchars($photoSrc) ?>"
+                                             class="doctor-avatar" alt="Photo">
+                                    </td>
+                                    <td><strong><?= htmlspecialchars($row['user_name']) ?></strong></td>
+                                    <td><?= htmlspecialchars($row['specialization_name']) ?></td>
+                                    <td><?= htmlspecialchars($row['doctor_fee']) ?></td>
+                                    <td><?= htmlspecialchars($row['doctor_availability']) ?></td>
+                                    <td style='text-align:center; font-weight:600; color:#1a56db;'><?= $row['total_appointments'] ?></td>
+                                    <td><?= $statusBadge ?></td>
+                                    <td>
+                                        <!-- Edit doctor -->
+                                        <a href="?edit_id=<?= $row['doctor_id'] ?>"
+                                           class="btn btn-sm btn-primary btn-icon" title="Edit">✏</a>
+                                    </td>
+                                </tr>
+                                <?php
+                            }
+                        } else {
+                            echo "<tr><td colspan='8' style='text-align:center; color:#6b7280; padding:30px;'>No doctors found.</td></tr>";
+                        }
+                        ?>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<?php include "ConfirmModal.php"; ?>
+<script src="../Script/DoctorManagement.js"></script>
+<script src="../Script/Modal.js"></script>
+</body>
+</html>
