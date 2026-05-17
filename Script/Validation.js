@@ -9,6 +9,7 @@ function togglePassword(fieldId, button) {
         button.textContent = 'Show';
     }
 }
+
 // Show an inline error message inside a form
 function showFormError(elementId, message) {
     var el = document.getElementById(elementId);
@@ -17,6 +18,7 @@ function showFormError(elementId, message) {
         el.style.display = 'flex';
     }
 }
+
 // Hide a form error message
 function hideFormError(elementId) {
     var el = document.getElementById(elementId);
