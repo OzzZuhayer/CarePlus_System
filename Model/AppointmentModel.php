@@ -78,4 +78,12 @@ class AppointmentModel {
         $stmt->close();
         return $affected > 0;
     }
+
+    // Get total completed appointment count (for homepage tagline)
+    function getCompletedAppointmentCount($conn) {
+        $sql = "SELECT COUNT(*) AS total FROM appointments WHERE appointment_status = 'Completed'";
+        $result = $conn->query($sql);
+        $row = $result->fetch_assoc();
+        return $row['total'];
+    }
 }
