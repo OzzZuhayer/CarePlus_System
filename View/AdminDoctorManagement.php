@@ -1,28 +1,28 @@
 <?php
 session_start();
 include_once "../Config/SessionGuard.php";
-
+ 
 if (!isset($_SESSION['loggedIn']) || $_SESSION['user_role'] != 'Admin') {
     header("Location: Login.php");
     exit();
 }
-
+ 
 include_once "../Config/Db.php";
 include_once "../Model/DoctorModel.php";
 include_once "../Model/AppointmentModel.php";
-
+ 
 $db = new Db();
 $conn = $db->connection();
 $doctorModel = new DoctorModel();
 $appointmentModel = new AppointmentModel();
-
+ 
 // Get all data needed for this page
 $doctors         = $doctorModel->getAllDoctors($conn);
 $specializations = $doctorModel->getAllSpecializations($conn);
 $stats           = $doctorModel->getDoctorStats($conn);
 $totalAppts      = $appointmentModel->getTotalAppointmentCount($conn);
 $todayAppts      = $appointmentModel->getTodaysAppointmentCount($conn);
-
+ 
 // Check if we are editing an existing doctor
 $editingDoctor = null;
 $selectedDays  = [];
@@ -33,10 +33,10 @@ if (isset($_GET['edit_id']) && is_numeric($_GET['edit_id'])) {
         $selectedDays = array_map('trim', explode(',', $editingDoctor['doctor_availability']));
     }
 }
-
+ 
 $errorMsg   = isset($_GET['error'])   ? urldecode($_GET['error'])   : '';
 $successMsg = isset($_GET['success']) ? urldecode($_GET['success']) : '';
-
+ 
 $activePage = 'doctors';
 $allDays    = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
 ?>
@@ -50,16 +50,16 @@ $allDays    = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday
 </head>
 <body>
 <div class="layout">
-
+ 
     <?php include "AdminSidebar.php"; ?>
-
+ 
     <div class="main-content">
-
+ 
         <div class="page-header">
             <h1>Doctor Management</h1>
             <p>Add, edit or remove doctors and manage their availability.</p>
         </div>
-
+ 
         <!-- Messages -->
         <?php if ($errorMsg): ?>
             <div class="alert alert-error">⚠ <?= htmlspecialchars($errorMsg) ?></div>
@@ -67,7 +67,7 @@ $allDays    = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday
         <?php if ($successMsg): ?>
             <div class="alert alert-success">✓ <?= htmlspecialchars($successMsg) ?></div>
         <?php endif; ?>
-
+ 
         <!-- Stat Cards -->
         <div class="stats-row">
             <div class="stat-card">
@@ -99,16 +99,16 @@ $allDays    = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday
                 </div>
             </div>
         </div>
-
+ 
         <!-- Add / Edit Doctor Form -->
         <div class="card">
             <div class="card-title"><?= $editingDoctor ? 'Edit Doctor' : 'Add / Edit Doctor' ?></div>
-
+ 
             <form action="../Controller/DoctorManagementController.php" method="POST"
                   enctype="multipart/form-data" id="doctorForm">
                 <input type="hidden" name="action" value="save_doctor">
                 <input type="hidden" name="doctor_id" value="<?= $editingDoctor['doctor_id'] ?? 0 ?>">
-
+ 
                 <div class="form-grid">
                     <!-- Left Column -->
                     <div>
@@ -118,20 +118,20 @@ $allDays    = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday
                                    placeholder="Enter doctor name"
                                    value="<?= htmlspecialchars($editingDoctor['user_name'] ?? '') ?>" required>
                         </div>
-
+ 
                         <div class="form-group" style="margin-bottom:14px;">
                             <label>Email</label>
                             <input type="email" name="user_email" class="form-control"
                                    placeholder="Enter email address"
                                    value="<?= htmlspecialchars($editingDoctor['user_email'] ?? '') ?>" required>
                         </div>
-
+ 
                         <div class="form-group" style="margin-bottom:14px;">
                             <label>Password <?= $editingDoctor ? '(leave blank to keep current)' : '' ?></label>
                             <input type="password" name="user_password" class="form-control"
                                    placeholder="Enter password" <?= $editingDoctor ? '' : 'required' ?>>
                         </div>
-
+ 
                         <div class="form-group" style="margin-bottom:14px;">
                             <label>Specialization</label>
                             <select name="specialization_id" class="form-control" required>
@@ -150,7 +150,7 @@ $allDays    = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday
                                 ?>
                             </select>
                         </div>
-
+ 
                         <div class="form-group" style="margin-bottom:14px;">
                             <label>Consultation Fee (TK)</label>
                             <input type="number" name="doctor_fee" class="form-control"
@@ -158,7 +158,7 @@ $allDays    = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday
                                    value="<?= htmlspecialchars($editingDoctor['doctor_fee'] ?? '') ?>" required>
                         </div>
                     </div>
-
+ 
                     <!-- Right Column -->
                     <div>
                         <!-- Photo Upload Box -->
@@ -177,7 +177,7 @@ $allDays    = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday
                                 <small style="color:#6b7280;">Current photo will be kept if no new one is uploaded.</small>
                             <?php endif; ?>
                         </div>
-
+ 
                         <div class="form-group" style="margin-bottom:14px;">
                             <label>Short Bio</label>
                             <textarea name="doctor_bio" class="form-control"
@@ -186,7 +186,7 @@ $allDays    = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday
                         </div>
                     </div>
                 </div>
-
+ 
                 <!-- Availability Days Checkboxes (full width) -->
                 <div class="form-group" style="margin-top:10px;">
                     <label>Availability Days (Weekly)</label>
@@ -200,7 +200,7 @@ $allDays    = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday
                         <?php endforeach; ?>
                     </div>
                 </div>
-
+ 
                 <div class="form-actions">
                     <?php if ($editingDoctor): ?>
                         <a href="AdminDoctorManagement.php" class="btn btn-secondary">Cancel</a>
@@ -212,7 +212,7 @@ $allDays    = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday
                 </div>
             </form>
         </div>
-
+ 
         <!-- Doctor List Table -->
         <div class="card">
             <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
@@ -221,7 +221,7 @@ $allDays    = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday
                        placeholder="Search doctor..." style="max-width:220px;"
                        onkeyup="searchTable('doctorSearch', 'doctorTable')">
             </div>
-
+ 
             <div class="table-wrap">
                 <table id="doctorTable">
                     <thead>
@@ -262,9 +262,12 @@ $allDays    = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday
                                     <td style='text-align:center; font-weight:600; color:#1a56db;'><?= $row['total_appointments'] ?></td>
                                     <td><?= $statusBadge ?></td>
                                     <td>
-                                        <!-- Edit doctor -->
-                                        <a href="?edit_id=<?= $row['doctor_id'] ?>"
-                                           class="btn btn-sm btn-primary btn-icon" title="Edit">✏</a>
+                                        <div id="doc-actions-<?= $row['doctor_id'] ?>">
+                                            <!-- initial single edit button; clicking expands to Edit + Delete -->
+                                            <a href="?edit_id=<?= $row['doctor_id'] ?>"
+                                               class="btn btn-sm btn-primary btn-icon" title="Edit"
+                                               onclick="return expandDocActions(event, <?= $row['doctor_id'] ?>)">✏</a>
+                                        </div>
                                     </td>
                                 </tr>
                                 <?php
@@ -277,12 +280,63 @@ $allDays    = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday
                 </table>
             </div>
         </div>
-
+ 
     </div>
 </div>
-
+ 
 <?php include "ConfirmModal.php"; ?>
 <script src="../Script/DoctorManagement.js"></script>
 <script src="../Script/Modal.js"></script>
+<script>
+// Expand the actions area to show Edit and Delete buttons
+function expandDocActions(e, doctorId) {
+    e.preventDefault();
+    var container = document.getElementById('doc-actions-' + doctorId);
+    if (!container) return false;
+ 
+    // If already expanded, do nothing
+    if (container.dataset.expanded === '1') return false;
+ 
+    var editUrl = '?edit_id=' + doctorId;
+    container.innerHTML = '' +
+        '<button class="btn btn-sm btn-primary" onclick="window.location=\'' + editUrl + '\'">Edit</button> ' +
+        '<button class="btn btn-sm btn-danger" onclick="confirmDeleteDoctor(' + doctorId + ')">Delete</button>' +
+        ' <button class="btn btn-sm btn-secondary" onclick="collapseDocActions(' + doctorId + ')">Cancel</button>';
+    container.dataset.expanded = '1';
+    return false;
+}
+ 
+function collapseDocActions(doctorId) {
+    var container = document.getElementById('doc-actions-' + doctorId);
+    if (!container) return;
+    var link = '<a href="?edit_id=' + doctorId + '" class="btn btn-sm btn-primary btn-icon" title="Edit" onclick="return expandDocActions(event, ' + doctorId + ')">✏</a>';
+    container.innerHTML = link;
+    container.dataset.expanded = '0';
+}
+ 
+function confirmDeleteDoctor(doctorId) {
+    if (typeof showConfirmModal === 'function') {
+        showConfirmModal(function() { submitDeleteDoctorForm(doctorId); }, 'Delete this doctor?', 'delete');
+    } else {
+        if (confirm('Delete this doctor?')) submitDeleteDoctorForm(doctorId);
+    }
+}
+ 
+function submitDeleteDoctorForm(doctorId) {
+    var form = document.createElement('form');
+    form.method = 'POST';
+    form.action = '../Controller/DoctorManagementController.php';
+ 
+    var a1 = document.createElement('input');
+    a1.type = 'hidden'; a1.name = 'action'; a1.value = 'delete_doctor';
+    var a2 = document.createElement('input');
+    a2.type = 'hidden'; a2.name = 'doctor_id'; a2.value = doctorId;
+ 
+    form.appendChild(a1);
+    form.appendChild(a2);
+    document.body.appendChild(form);
+    form.submit();
+}
+</script>
 </body>
 </html>
