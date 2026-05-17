@@ -28,10 +28,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         header("Location: ../View/Login.php?error=" . urlencode("Password can not be empty."));
         exit();
     }
-    else if(preg_match("^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$", $userPassword)){
-        header("Location: ../View/Login.php?error=" . urlencode("A valid password is required."));
-        exit();
-    }
 
     // Connect to the database
     $db = new Db();
