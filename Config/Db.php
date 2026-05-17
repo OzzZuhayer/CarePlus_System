@@ -6,9 +6,9 @@ date_default_timezone_set('Asia/Dhaka');
 
 class Db {
     function connection() {
-        $dbHost = "";
-        $dbUser = "";
-        $dbPassword = "";
+        $dbHost = "100.117.12.1";
+        $dbUser = "wt_collborator";
+        $dbPassword = "WT_G03_SP25-26[C]";
         $dbName = "project_wt";
 
         // Create the connection
