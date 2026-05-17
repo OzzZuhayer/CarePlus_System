@@ -24,6 +24,7 @@ $doctorPhotoSrc = (!empty($doctorProfile['doctor_photo']))
 $doctorId = $_SESSION['doctor_id'];
 
 // Today's confirmed appointments only
+$todaysAllAppointments = $appointmentModel->getTodaysConfirmedAppointments($conn, $doctorId);
 $todaysAppointments = $appointmentModel->getTodaysConfirmedAppointments($conn, $doctorId);
 
 // Weekly appointments Mon-Fri
@@ -40,8 +41,8 @@ $noShowCount    = 0;
 // Group weekly appointments by day
 $weeklyByDay = ['Mon' => [], 'Tue' => [], 'Wed' => [], 'Thu' => [], 'Fri' => []];
 
-if ($todaysAppointments && $todaysAppointments->num_rows > 0) {
-    while ($row = $todaysAppointments->fetch_assoc()) {
+if ($todaysAllAppointments && $todaysAllAppointments->num_rows > 0) {
+    while ($row = $todaysAllAppointments->fetch_assoc()) {
         $todayCount++;
         if ($row['appointment_status'] == 'Completed')  $completedCount++;
         elseif ($row['appointment_status'] == 'No-Show') $noShowCount++;
