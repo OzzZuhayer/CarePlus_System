@@ -97,5 +97,82 @@ $activePage = 'appointments';
                 </div>
             </form>
         </div>
+
         <!-- Appointments Table -->
-        <div class="card">              
+        <div class="card">
+            <div class="table-wrap">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>APPT ID</th>
+                            <th>Date & Time</th>
+                            <th>Patient</th>
+                            <th>Doctor</th>
+                            <th>Reason</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php
+                        if ($appointments && $appointments->num_rows > 0) {
+                            while ($row = $appointments->fetch_assoc()) {
+                                $statusClass = 'badge-' . strtolower(str_replace(['-',' '], '', $row['appointment_status']));
+                                $displayDate = date('d M Y', strtotime($row['appointment_date']));
+                                $displayTime = date('h:i A', strtotime($row['appointment_time']));
+                                ?>
+                                <tr id="appt-row-<?= $row['appointment_id'] ?>">
+                                    <td><?= 'APPT-' . str_pad($row['appointment_id'], 4, '0', STR_PAD_LEFT) ?></td>
+                                    <td><?= $displayDate ?><br><small style="color:#6b7280;"><?= $displayTime ?></small></td>
+                                    <td><?= htmlspecialchars($row['patient_name']) ?></td>
+                                    <td>
+                                        <?= htmlspecialchars($row['doctor_name']) ?><br>
+                                        <small style="color:#6b7280;"><?= htmlspecialchars($row['specialization_name']) ?></small>
+                                    </td>
+                                    <td style="max-width:150px;"><?= htmlspecialchars(substr($row['appointment_message'], 0, 60)) ?>...</td>
+                                    <td>
+                                        <span class="badge <?= $statusClass ?>"
+                                              id="status-badge-<?= $row['appointment_id'] ?>">
+                                            <?= $row['appointment_status'] ?>
+                                        </span>
+                                    </td>
+                                    <td id="appt-actions-<?= $row['appointment_id'] ?>">
+                                        <?php if ($row['appointment_status'] === 'Cancelled'): ?>
+                                            <span style="color:#9ca3af; font-size:13px;">—</span>
+                                        <?php else: ?>
+                                            <div style="display:flex; gap:6px; flex-wrap:wrap;">
+                                                <?php if ($row['appointment_status'] === 'Pending'): ?>
+                                                    <!-- Confirm pending appointment -->
+                                                    <button class="btn btn-sm btn-success"
+                                                            onclick="updateAppointmentStatus(<?= $row['appointment_id'] ?>, 'Admin', 'Confirmed')">
+                                                        Confirm
+                                                    </button>
+                                                <?php endif; ?>
+                                                <!-- Cancel with required reason -->
+                                                <button class="btn btn-sm btn-danger"
+                                                        onclick="cancelWithReason(<?= $row['appointment_id'] ?>)">
+                                                    Cancel
+                                                </button>
+                                            </div>
+                                        <?php endif; ?>
+                                    </td>
+                                </tr>
+                                <?php
+                            }
+                        } else {
+                            echo "<tr><td colspan='7' style='text-align:center;color:#6b7280;padding:30px;'>No appointments found.</td></tr>";
+                        }
+                        ?>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<?php include "ConfirmModal.php"; ?>
+<script src="../Script/Modal.js"></script>
+<script src="../Script/AppointmentStatus.js"></script>
+</body>
+</html>
