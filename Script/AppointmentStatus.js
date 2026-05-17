@@ -74,3 +74,54 @@ function sendStatusUpdate(appointmentId, newStatus, note, removeRow) {
     }
     xhr.send(body);
 }
+
+// Cancel with a required reason — modal with textarea (AdminAppointments page)
+function cancelWithReason(appointmentId) {
+    showConfirmModal(function() {
+        var noteInput = document.getElementById('modalNoteInput');
+        var reason = noteInput ? noteInput.value.trim() : '';
+        if (!reason) {
+            alert('A cancellation note is required.');
+            return;
+        }
+
+        var xhr = new XMLHttpRequest();
+        xhr.open('POST', '../Controller/UpdateAppointmentStatusController.php', true);
+        xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+
+        xhr.onreadystatechange = function() {
+            if (xhr.readyState === 4 && xhr.status === 200) {
+                try {
+                    var response = JSON.parse(xhr.responseText);
+                    if (response.ok) {
+                        var badge = document.getElementById('status-badge-' + appointmentId);
+                        if (badge) {
+                            badge.textContent = 'Cancelled';
+                            badge.className   = 'badge badge-cancelled';
+                        }
+                        var actions = document.getElementById('appt-actions-' + appointmentId);
+                        if (actions) actions.innerHTML = '<span style="color:#9ca3af;font-size:13px;">—</span>';
+                    } else {
+                        alert('Error: ' + response.message);
+                    }
+                } catch(e) {
+                    alert('Something went wrong.');
+                }
+            }
+        };
+
+        xhr.send('action=cancel_with_reason&appointment_id=' + appointmentId + '&reason=' + encodeURIComponent(reason));
+    }, 'Enter cancellation reason below. (Required)', 'cancel', true);
+}
+
+// Map status to badge CSS class
+function getStatusBadgeClass(status) {
+    var map = {
+        'Pending'  : 'badge-pending',
+        'Confirmed': 'badge-confirmed',
+        'Completed': 'badge-completed',
+        'Cancelled': 'badge-cancelled',
+        'No-Show'  : 'badge-noshow'
+    };
+    return map[status] || 'badge-pending';
+}
