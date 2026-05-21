@@ -7,7 +7,7 @@ Developed as part of the Web Technologies course at AIUB — Spring 2025–26.
 
 ## Pages & Views
 
-### 🏠 Index / Homepage
+### 🏠 Homepage
 The public-facing landing page of CarePlus. Displays the CarePlus branding, a brief description of the system, featured doctors pulled from the database, and a call-to-action for patients to register or login. No authentication required.
 &nbsp;
 
@@ -43,36 +43,46 @@ The patient's dashboard after login. Shows a welcome message, upcoming appointme
 #### Browse Doctors
 Displays all active doctors as cards with photo, name, specialization, and consultation fee. A specialization filter dropdown re-renders the cards via AJAX without a page reload.
 
+<img width="1920" height="869" alt="image" src="https://github.com/user-attachments/assets/87fb16f8-0f13-463c-a689-fc19b14ec507" />
+
 &nbsp;
 
 #### Book Appointment
 Doctor profile and booking flow. Shows the next available dates based on the doctor's configured availability days. Selecting a date fetches available time slots via AJAX, excluding already-booked times. Submitting the form performs a server-side slot re-check before confirming the booking.
+
+<img width="1920" height="869" alt="image" src="https://github.com/user-attachments/assets/1cba742d-14b8-4eb0-9b48-e7f7de02cffe" />
 
 &nbsp;
 
 #### Booking Confirmation
 Shown after a successful booking. Displays the generated appointment ID (APPT-XXXX), doctor name, date, time, and reason submitted by the patient.
 
+<img width="1920" height="869" alt="image" src="https://github.com/user-attachments/assets/56972401-e4e3-4a18-95cb-89b50ec21117" />
+
 &nbsp;
 
-#### My Appointments
+#### Browse Appointments
 Lists all appointments for the logged-in patient with tab filters for All, Pending, Confirmed, Completed, and Cancelled. Pending appointments have a Cancel button that fires an AJAX request and updates the row in place. Cancelled appointments show a Cancellation Note column.
+
+<img width="1920" height="869" alt="image" src="https://github.com/user-attachments/assets/3432997c-f94b-4146-9da0-1685fad1a672" />
 
 &nbsp;
 
 #### Edit Profile
 Allows patients to update their name, date of birth, blood group, and phone number. Includes a separate password change section that requires the current password before saving a new one.
 
+<img width="1920" height="1094" alt="image" src="https://github.com/user-attachments/assets/3ad9b5da-5d0d-4136-93ff-6feb9fb99c8b" />
+
 &nbsp;
 
 ---
 
-### 👨‍⚕️ Doctor Pages
+### 🩺 Doctor Pages
 
-&nbsp;
-
-#### Doctor Dashboard
+#### Dashboard
 The doctor's main page after login. Shows stat cards for today's confirmed appointments, completed count, remaining, and no-shows. The today's appointments table displays only Confirmed appointments — doctors can mark each as Completed (removes the row via AJAX) or No-Show. Below the table, a weekly schedule grid renders dynamically from 9:00 AM to 10:00 PM in 30-minute slots across Monday to Friday. Clicking an appointment block opens a detail modal showing the appointment ID, patient name, time, status, and full reason.
+
+<img width="1920" height="2594" alt="image" src="https://github.com/user-attachments/assets/5c60842e-4593-4484-ada7-2c44e46b5434" />
 
 &nbsp;
 
@@ -80,30 +90,38 @@ The doctor's main page after login. Shows stat cards for today's confirmed appoi
 
 ### 🛠 Admin Pages
 
-&nbsp;
-
-#### Admin Dashboard
+#### Dashboard
 The admin's main page. Displays stat cards for total doctors, active doctors, total appointments, and today's appointment count. The table below shows only today's and tomorrow's Pending appointments. Admins can update any row's status through a confirmation modal — selecting Cancelled shows a required note textarea. Cancelled rows are removed from the table via AJAX after confirmation.
 
+<img width="1920" height="869" alt="image" src="https://github.com/user-attachments/assets/616fe482-13fa-4808-b26f-312d1967463d" />
+
 &nbsp;
 
-#### Admin Appointments
+#### Appointments Management
 Full appointment list with filter controls for doctor, date, and status applied via GET parameters. Rows with Cancelled or Completed status show a dash instead of action buttons. Pending rows show a Confirm button. All non-cancelled rows show a Cancel button that requires a cancellation note via modal.
 
+<img width="1920" height="869" alt="image" src="https://github.com/user-attachments/assets/92ef0376-df34-47d1-b99f-659b4c7ae183" />
+
 &nbsp;
 
-#### Admin Doctor Management
+#### Doctors Management
 Manage doctor profiles. Includes an add/edit form with fields for name, email, password, specialization, consultation fee, photo upload (JPEG/PNG max 2MB), bio, and weekly availability day checkboxes. The doctor list table shows all doctors with their stats and an edit action. Deleting a doctor deactivates their account rather than permanently removing them.
 
+<img width="1920" height="1431" alt="image" src="https://github.com/user-attachments/assets/216c6e28-ccfb-4f17-a42d-1423a4ab6641" />
+
 &nbsp;
 
-#### Admin Specializations
+#### Specializations Management
 Manage medical specializations with full CRUD. Duplicate names are blocked on add and edit. Deletion is restricted if any doctor is currently assigned to the specialization.
 
+<img width="1920" height="1093" alt="image" src="https://github.com/user-attachments/assets/6c356a4b-9b3a-4727-b910-c9eccfa9dd4a" />
+
 &nbsp;
 
-#### Admin User Management
+#### Users Management
 Lists all registered users — patients, doctors, and admins — with their role and active status. Each row has an Activate/Deactivate toggle that fires an AJAX request and updates the badge in place without a page reload.
+
+<img width="1920" height="869" alt="image" src="https://github.com/user-attachments/assets/446465de-a1f3-490a-b6b5-ebeb4d750474" />
 
 &nbsp;
 
