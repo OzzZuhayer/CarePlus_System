@@ -1,4 +1,4 @@
-# CarePlus — Hospital Appointment Booking System
+# CarePlus - Hospital Appointment Booking System
 
 A web-based healthcare scheduling portal built with PHP MVC, MySQL, and JavaScript.
 Developed as part of the Web Technologies course at AIUB — Spring 2025–26.
