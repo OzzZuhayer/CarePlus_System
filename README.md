@@ -27,7 +27,7 @@ Patient self-registration form. Collects name, email, password, date of birth, b
 #### Login
 Single login form for all three roles — Patient, Doctor, and Admin. After credential verification, each role is redirected to their respective dashboard. Deactivated accounts are blocked with an appropriate message.
 
-<img width="1920" height="869" alt="Login" src="https://github.com/user-attachments/assets/489c14f3-77a2-4893-b115-2c6fd55ef758" />
+<img width="1920" height="869" alt="image" src="https://github.com/user-attachments/assets/fe22aff6-673d-4d24-9ffa-237929fbe310" />
 
 ---
 
